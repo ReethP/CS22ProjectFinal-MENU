@@ -9,9 +9,17 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
+import java.util.ArrayList;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import Game.GameStage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FileNotFoundException;
+//import java.util.Scanner;
+
 
 public class Menu {
 	private Stage stage;
@@ -22,19 +30,45 @@ public class Menu {
 	private ImageView instructions;
 	private ImageView about;
 	private ImageView exit;
+	private ArrayList<String> highscores;
 	
 	
 	public Menu(Stage primaryStage) {
 		//Main Menu
+		this.highscores = new ArrayList<String>();
 		this.stage = primaryStage;
 		this.root = new Pane();
 		this.scene = new Scene(this.root, 768, 460.8);
 		//set scene size
 		this.background = new BackgroundImage(new Image("images/WHACKMENU.jpg"), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, new BackgroundSize(768, 460.8, true, true, true, true));
 		//set background and background size
+		
 
 	}
 	public void setMenu() {
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("HighScores.txt"));
+			//Scanner scan = new Scanner(System.in);
+			String line;
+			while((line=reader.readLine()) != null) {
+				highscores.add(line);
+			}
+			reader.close();
+		} catch(FileNotFoundException e) {
+			try{
+						System.out.println("File HighScores.txt not found");
+						BufferedWriter writer = new BufferedWriter(new FileWriter("HighScores.txt"));
+						writer.write(0+"\n");
+						writer.write(0+"\n");
+						writer.write(0+"\n");
+						highscores.add("0");
+						highscores.add("0");
+						highscores.add("0");
+						writer.close();}catch(Exception f){}
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		//System.out.println(highscores);
 		
 		this.stage.setTitle("Whack-A-Mole");
         this.root.setBackground(new Background(this.background));
@@ -53,7 +87,7 @@ public class Menu {
         this.play.setOnMouseClicked((MouseEvent e) -> {
         	//go to gametest scene if object is clicked
             System.out.println("Clicked Play");
-    		GameStage theGameStage = new GameStage(this.stage, this.scene);
+    		GameStage theGameStage = new GameStage(this.stage, this.scene,this.highscores);
     		theGameStage.setStage();
         });
         //above creates the play button
